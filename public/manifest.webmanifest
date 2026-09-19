@@ -1,0 +1,25 @@
+{
+  "name": "UJIANKU - CBT & Latihan Soal Offline SMAN 19 Bandung",
+  "short_name": "UJIANKU",
+  "description": "Platform CBT & Simulasi Asesmen Ujian Resmi UJIANKU SMAN 19 Bandung Terintegrasi Bank Soal, Mode Offline Tanpa Internet & Penilaian Otomatis.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#020617",
+  "theme_color": "#0f172a",
+  "categories": ["education", "productivity"],
+  "icons": [
+    {
+      "src": "/logo-ujianku.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo-sman19.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
