@@ -1,0 +1,8 @@
+{
+  "name": "UTBK SMA2.91",
+  "description": "Aplikasi CBT Edu: Platform simulasi ujian online CBT real-time UTBK SMA (MIPA, IPS, Bahasa \u0026 Umum) dengan sistem penilaian otomatis, pelacakan waktu, analisis nilai mendalam, serta modul input dan manajemen bank soal interaktif.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

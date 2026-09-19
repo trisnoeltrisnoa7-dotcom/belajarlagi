@@ -1,0 +1,241 @@
+{
+  "entities": {
+    "StudentRosterEntry": {
+      "title": "Student Roster Entry",
+      "description": "Registered student data for CBT NIS authentication and quota control",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for student roster entry",
+          "maxLength": 128
+        },
+        "nis": {
+          "type": "string",
+          "description": "Student NIS identification number",
+          "maxLength": 50
+        },
+        "fullName": {
+          "type": "string",
+          "description": "Full legal name of the student",
+          "maxLength": 150
+        },
+        "isActive": {
+          "type": "boolean",
+          "description": "Whether student account is active for exam access"
+        },
+        "isLocked": {
+          "type": "boolean",
+          "description": "Whether account is currently locked due to active session"
+        },
+        "activeSessionId": {
+          "type": "string",
+          "description": "Currently active session ID if logged in",
+          "maxLength": 128
+        },
+        "lastLoginAt": {
+          "type": "string",
+          "description": "ISO timestamp of the most recent student login",
+          "maxLength": 64
+        },
+        "notes": {
+          "type": "string",
+          "description": "Optional administrative notes",
+          "maxLength": 300
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "ISO timestamp of entry creation",
+          "maxLength": 64
+        },
+        "studentClass": {
+          "type": "string",
+          "description": "Class or grade section of the student (actual Firestore field)",
+          "maxLength": 50
+        }
+      },
+      "required": [
+        "id",
+        "nis",
+        "fullName",
+        "studentClass",
+        "isActive"
+      ]
+    },
+    "ExamSubmission": {
+      "title": "Exam Submission",
+      "description": "Actual CBT exam submission document written by src/firebase.ts",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the exam submission",
+          "maxLength": 128
+        },
+        "packageId": {
+          "type": "string",
+          "description": "ID of the completed exam package",
+          "maxLength": 128
+        },
+        "packageTitle": {
+          "type": "string",
+          "description": "Title of the exam package",
+          "maxLength": 200
+        },
+        "studentNis": {
+          "type": "string",
+          "description": "NIS of the student who took the exam",
+          "maxLength": 50
+        },
+        "studentName": {
+          "type": "string",
+          "description": "Name of the student",
+          "maxLength": 150
+        },
+        "studentClass": {
+          "type": "string",
+          "description": "Class or grade section of the student",
+          "maxLength": 50
+        },
+        "totalQuestions": {
+          "type": "number",
+          "description": "Total count of exam questions"
+        },
+        "submittedAt": {
+          "type": "string",
+          "description": "ISO timestamp of exam submission",
+          "maxLength": 64
+        },
+        "totalIrtScore": {
+          "type": "number",
+          "description": "Calculated overall IRT score"
+        },
+        "overallAccuracy": {
+          "type": "number",
+          "description": "Overall accuracy percentage"
+        },
+        "totalCorrect": {
+          "type": "number",
+          "description": "Number of correct answers"
+        },
+        "totalIncorrect": {
+          "type": "number",
+          "description": "Number of incorrect answers"
+        },
+        "totalBlank": {
+          "type": "number",
+          "description": "Number of unanswered questions"
+        },
+        "totalDurationSeconds": {
+          "type": "number",
+          "description": "Total exam duration in seconds"
+        }
+      },
+      "required": [
+        "id",
+        "packageId",
+        "studentNis",
+        "studentName",
+        "totalIrtScore",
+        "submittedAt"
+      ]
+    },
+    "ActiveStudentSession": {
+      "title": "Active Student Session",
+      "description": "Real-time session tracker for anti-dual login enforcement",
+      "type": "object",
+      "properties": {
+        "nis": {
+          "type": "string",
+          "description": "Student NIS",
+          "maxLength": 50
+        },
+        "studentName": {
+          "type": "string",
+          "description": "Student full name",
+          "maxLength": 150
+        },
+        "className": {
+          "type": "string",
+          "description": "Student class name",
+          "maxLength": 50
+        },
+        "packageId": {
+          "type": "string",
+          "description": "Current exam package ID",
+          "maxLength": 128
+        },
+        "sessionId": {
+          "type": "string",
+          "description": "Unique session token on student client device",
+          "maxLength": 128
+        },
+        "deviceInfo": {
+          "type": "string",
+          "description": "User agent or device summary",
+          "maxLength": 200
+        },
+        "loginTimestamp": {
+          "type": "number",
+          "description": "Unix timestamp in milliseconds when session started"
+        },
+        "lastHeartbeat": {
+          "type": "number",
+          "description": "Unix timestamp in milliseconds of latest activity"
+        }
+      },
+      "required": [
+        "nis",
+        "studentName",
+        "sessionId",
+        "loginTimestamp",
+        "lastHeartbeat"
+      ]
+    },
+    "SystemSetting": {
+      "title": "System Setting Document",
+      "description": "Global configuration document for CBT app",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Setting key identifier (e.g., nis_security, school_profile)",
+          "maxLength": 64
+        },
+        "payload": {
+          "type": "string",
+          "description": "JSON stringified configuration payload",
+          "maxLength": 50000
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "ISO timestamp of last update",
+          "maxLength": 64
+        }
+      },
+      "required": [
+        "id",
+        "payload",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/students/{studentId}": {
+      "schema": "StudentRosterEntry",
+      "description": "Registered students roster list with up to 400 NIS records"
+    },
+    "/examSubmissions/{submissionId}": {
+      "schema": "ExamSubmission",
+      "description": "Student exam submissions and scores"
+    },
+    "/activeSessions/{nis}": {
+      "schema": "ActiveStudentSession",
+      "description": "Active student CBT sessions for anti-dual login and supervisor monitoring"
+    },
+    "/systemSettings/{settingId}": {
+      "schema": "SystemSetting",
+      "description": "School profile, security rules, and display settings"
+    }
+  }
+}

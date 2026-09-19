@@ -1,0 +1,52 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function validId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-\\.]+$');
+    }
+    function incoming() { return request.resource.data; }
+
+    // Default deny. No unauthenticated public reads/writes.
+    match /{document=**} { allow read, write: if false; }
+
+    match /test/{docId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
+    // Roster contains personal student data: authenticated access only.
+    match /students/{studentId} {
+      allow read: if signedIn();
+      allow create, update: if signedIn() && validId(studentId)
+        && incoming().nis is string && incoming().nis.size() <= 50
+        && incoming().fullName is string && incoming().fullName.size() <= 150;
+      allow delete: if signedIn() && validId(studentId);
+    }
+
+    match /examSubmissions/{submissionId} {
+      allow read: if signedIn();
+      allow create, update: if signedIn() && validId(submissionId)
+        && incoming().packageId is string && incoming().packageId.size() <= 128
+        && incoming().studentNis is string && incoming().studentNis.size() <= 50
+        && incoming().studentName is string && incoming().studentName.size() <= 150;
+      allow delete: if signedIn() && validId(submissionId);
+    }
+
+    match /activeSessions/{nis} {
+      allow read: if signedIn();
+      allow create, update: if signedIn() && validId(nis)
+        && incoming().sessionId is string && incoming().sessionId.size() <= 128
+        && incoming().studentName is string && incoming().studentName.size() <= 150;
+      allow delete: if signedIn() && validId(nis);
+    }
+
+    match /systemSettings/{settingId} {
+      allow read: if signedIn();
+      allow create, update: if signedIn() && validId(settingId)
+        && incoming().id is string && incoming().id.size() <= 64
+        && incoming().payload is string && incoming().payload.size() <= 1000000;
+      allow delete: if signedIn() && validId(settingId);
+    }
+  }
+}
